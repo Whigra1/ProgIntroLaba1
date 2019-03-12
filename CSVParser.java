@@ -59,4 +59,15 @@ class Student{
         this.average = average;
         this.contact = contact;
     }
+    public double getAverage(){
+        return average;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public boolean isContact(){
+        return this.contact;
+    }
 }
