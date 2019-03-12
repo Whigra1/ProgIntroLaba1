@@ -20,7 +20,7 @@ public class CSVParser {
         }
 
     }
-public void write(String path) throws Exception{
+	public void write(String path) throws Exception{
         BufferedWriter bw = new BufferedWriter(new FileWriter(path));
         double percent = this.people_count * 0.4;
         students.sort(Comparator.comparing(Student::getAverage).reversed());
@@ -40,6 +40,23 @@ public void write(String path) throws Exception{
 
         bw.close();
     }
-    
+    private double avarage(String [] line){
+        double temp = 0;
+        for(int i = 1; i < 6 ;i++){
+            temp += Integer.parseInt(line[i]);
+        }
+        return temp/5;
+    }
+
 }
 
+class Student{
+    private String surname;
+    private double average;
+    private boolean contact;
+    public Student(String surname , double average, boolean contact){
+        this.surname = surname;
+        this.average = average;
+        this.contact = contact;
+    }
+}
