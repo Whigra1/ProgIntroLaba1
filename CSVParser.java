@@ -20,6 +20,26 @@ public class CSVParser {
         }
 
     }
+public void write(String path) throws Exception{
+        BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+        double percent = this.people_count * 0.4;
+        students.sort(Comparator.comparing(Student::getAverage).reversed());
+        int count = 1;
+        for(int student = 0;;student++){
+            Student s = students.get(student);
+            if (count > percent){
+                s = students.get(student - 1);
+                bw.write("Last mark for budget: " + s.getAverage());
+                break;
+            }
+            if (!s.isContact()) {
+                bw.write(s.getSurname() + " " + s.getAverage() + "\n");
+                count++;
+            }
+        }
+
+        bw.close();
+    }
     
 }
 
