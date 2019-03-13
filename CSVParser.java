@@ -1,65 +1,74 @@
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Comparator;
+
 
 
 public class CSVParser {
-    private ArrayList<Student> students = new ArrayList<>();
-    private int people_count;
 
-    public void read(String path) throws Exception {
+    private int count = 0;
+
+    public String [] read(String path) throws Exception {
         BufferedReader br = new BufferedReader(new FileReader(path));
-        this.people_count = Integer.parseInt(br.readLine());
+        int l  = Integer.parseInt(br.readLine());
         String line = "";
+        String res = "";
+        double average_rate;
+        count = 0;
         while((line = br.readLine()) != null){
             String [] row = line.split(",");
-            if (row[6].equals("FALSE"))
-                students.add(new Student(row[0],avarage(row),false));
-            else if (row[6].equals("TRUE"))
-                students.add(new Student(row[0],avarage(row),true));
+            if (row[6].equals("FALSE")) {
+                average_rate = avarage(row);
+                if (average_rate != -1){
+                    count++;
+                    res += row[0] + "," + average_rate + "\n";
+                }
+            }
         }
-
+        String[] data = res.split("\n");
+        for(int i = 0; i < data.length-1; i++){
+            for(int j = 0; j < data.length-1; j++){
+                double mark = Double.valueOf(data[j].split(",")[1]);
+                Double mark_to_compare = Double.valueOf(data[j + 1].split(",")[1]);
+                if (mark < mark_to_compare){
+                    String t = data[j];
+                    data[j] = data[j+1];
+                    data[j+1] = t;
+                }
+            }
+        }
+        return data;
     }
-	public void write(String path) throws Exception{
+    public void write(String path, String [] rates) throws Exception{
         BufferedWriter bw = new BufferedWriter(new FileWriter(path));
-        double percent = this.people_count * 0.4;
-        students.sort(Comparator.comparing(Student::getAverage).reversed());
-        int count = 1;
-        for(int student = 0;;student++){
-            Student s = students.get(student);
-            if (count > percent){
-                s = students.get(student - 1);
-                bw.write("Last mark for budget: " + s.getAverage());
-                break;
-            }
-            if (!s.isContact()) {
-                bw.write(s.getSurname() + " " + s.getAverage() + "\n");
-                count++;
-            }
+        double percent = this.count * 0.4;
+        for(int i = 0;i<percent;i++){
+            bw.write(rates[i] + "\n");
         }
-
         bw.close();
     }
-    private double avarage(String [] line){
+    private double avarage(String[] line){
         double temp = 0;
-        for(int i = 1; i < 6 ;i++){
-            temp += Integer.parseInt(line[i]);
+        for(int i = 1; i < 6 ;i++) {
+            if (Integer.valueOf(line[i]) < 60)
+                return -1;
+            temp += Integer.valueOf(line[i]);
         }
         return temp/5;
     }
-
 }
 
-class Student{
+class Student {
     private String surname;
     private double average;
     private boolean contact;
-    public Student(String surname , double average, boolean contact){
+
+    public Student(String surname, double average, boolean contact) {
         this.surname = surname;
         this.average = average;
         this.contact = contact;
     }
-    public double getAverage(){
+
+    public double getAverage() {
         return average;
     }
 
@@ -67,7 +76,7 @@ class Student{
         return surname;
     }
 
-    public boolean isContact(){
+    public boolean isContact() {
         return this.contact;
     }
 }
